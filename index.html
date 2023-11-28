@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AutoTrader Listing Age</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script>
+            $(document).ready(function() {
+                $('#dateForm').submit(function(event) {
+                    event.preventDefault();
+                    
+                    const url = $('#urlInput').val();
+                    const urlDate = url.match(/\d{8}/)[0];
+                    
+                    if (urlDate) {
+                        const year = urlDate.slice(0, 4);
+                        const month = urlDate.slice(4, 6);
+                        const day = urlDate.slice(6, 8);
+                        const inputDate = new Date(`${year}-${month}-${day}`);
+                        
+                        if (!isNaN(inputDate) && inputDate.getTime() < new Date().getTime()) {
+                            const differenceInDays = Math.floor((new Date() - inputDate) / (1000 * 3600 * 24));
+                            const daysText = differenceInDays === 1 ? 'day' : 'days';
+                            const formattedDate = inputDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
+
+                            $('#result').html(`Listed on <strong>${formattedDate}</strong><br /><small>(<strong>${differenceInDays}</strong> ${daysText} ago)</small>`);
+                        } else {
+                            $('#result').text('Invalid date in URL');
+                        }
+                    } else {
+                        $('#result').text('Invalid AutoTrader URL');
+                    }
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="flex justify-center items-center h-screen">
+            <div class="w-full max-w-md p-6 bg-gray-100 rounded-lg shadow-md">
+              <form id="dateForm" class="flex flex-col items-center">
+                <label for="urlInput" class="mb-2">Enter URL:</label>
+                <input type="text" id="urlInput" placeholder="Paste URL here" class="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500">
+                <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">Calculate</button>
+              </form>
+              <p id="result" class="mt-4 text-center text-xl font-bold"></p>
+            </div>
+          </div>          
+    </body>
+</html>
